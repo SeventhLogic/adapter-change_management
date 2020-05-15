@@ -96,13 +96,13 @@ const options = {
     let callbackReponse = null;
 
     if(hibernating){
-      console.log('the ServiceNow session is currently hibernating');
+      console.log('the ServiceNow session is currently hibernating');//not needed, used for testing purposes
       callbackError = 'The ServiceNow session is currently hibernating.';
     }else if(error){
-      console.log('there is an error present.');
+      console.log('there is an error present.');//not needed, used for testing purposes
       callbackError = error;
     }else if(!validResponseRegex.test(response.statusCode)){
-      console.log('bad status code.');
+      console.log('bad status code.');//not needed, used for testing purposes
       callbackError = response;
     }else{
       callbackReponse = response;
