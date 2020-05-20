@@ -186,16 +186,7 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-     this.connector.get((data,error) => { //standard push to get
-         if(error){
-             callback = "There was an error in connecotr.get please check the logs."; //define callback as an error if there is one.
-         }else if(!error && data.statusCode == 200){//if no error and status code is 200
-             var jsonObj = JSON.parse(data);//parse string returned in data to json.
-             let ticketNumber = jsonObj.result[0].number;
-             callback = ticketNumber;//placeholder
-             return callback;
-         }
-     });
+     this.connector.get(data,error);
   }
 
   /**
