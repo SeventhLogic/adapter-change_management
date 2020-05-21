@@ -114,7 +114,8 @@ healthcheck(callback) {
       * healthcheck(), execute it passing the error seen as an argument
       * for the callback's errorMessage parameter.
       */
-      log.debug('There was an error. Error raw:\n' + error);
+      log.info('There was an error. Error raw:\n' + error);
+      callback(error);
    } else {
      /**
       * Write this block.
@@ -186,14 +187,24 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-     this.connector.get((data,error) => { //standard push to get
+     this.connector.get((data, error) => { //standard push to get
          if(error){
              callback = "There was an error in connecotr.get please check the logs."; //define callback as an error if there is one.
-         }else if(!error && data.statusCode == 200){//if no error and status code is 200
+         }else if(!error){//if no error
              var jsonObj = JSON.parse(data);//parse string returned in data to json.
-             let ticketNumber = jsonObj.result[0].number;
-             callback = ticketNumber;//placeholder
-             return callback;
+             var resultsArray = [];
+             for(var i = 0; i < jsonObj.result.length; i++){
+                var counter = jsonObj.result[i];
+                resultsArray.push({"change_ticket_number":counter.number},
+                {"active": counter.active},
+                {"priority": counter.priority},
+                {"description": counter.description},
+                {"work_start": counter.work_start},
+                {"work_end": counter.work_end},
+                {"change_ticket_key": counter.sys_id}
+                );//this feels sloppy like there should be a better way but need more js understanding. map and reduce seems like it would work but without debug is kind of hard
+             }
+             callback = resultsArray;
          }
      });
   }
@@ -208,13 +219,28 @@ healthcheck(callback) {
    *   handles the response.
    */
   postRecord(callback) {
-    /**
-     * Write the body for this function.
-     * The function is a wrapper for this.connector's post() method.
-     * Note how the object was instantiated in the constructor().
-     * post() takes a callback function.
-     */
-     this.connector.post(data, error);
+    this.connector.post((data,error) => { //standard push to post
+      if(error){
+          callback = "There was an error in connecotr.get please check the logs."; //define callback as an error if there is one.
+      }else if(!error){//if no error
+          var jsonObj = JSON.parse(data);//parse string returned in data to json.
+          var resultsArray = []; //creat empty array to dump values into
+          for(var i = 0; i < jsonObj.result.length; i++){
+             var counter = jsonObj.result[i];
+             resultsArray.push(
+             {"change_ticket_number":counter.number},
+             {"active": counter.active},
+             {"priority": counter.priority},
+             {"description": counter.description},
+             {"work_start": counter.work_start},
+             {"work_end": counter.work_end},
+             {"change_ticket_key": counter.sys_id}
+             );//this feels sloppy like there should be a better way but need more js understanding. map and reduce seems like it would work but without debug is kind of hard
+          }
+          callback = resultsArray;
+      }
+  });
+     
   }
 }
 

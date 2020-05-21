@@ -135,7 +135,7 @@ class ServiceNowConnector {
       console.log('bad status code.');//not needed, used for testing purposes
       callbackError = response;
     }else{
-      callbackReponse = response;
+      callbackReponse = body;
     }
     return callback(callbackReponse, callbackError);
   }
